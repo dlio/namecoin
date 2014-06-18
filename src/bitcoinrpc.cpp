@@ -312,10 +312,11 @@ GetDifficulty ()
   return GetDifficulty (pindexBest->nBits);
 }
 
-Value BlockToValue(CBlock &block)
+Value BlockToValue(CBlock &block, CBlockIndex* blockindex)
 {
     Object obj;
     obj.push_back(Pair("hash", block.GetHash().ToString().c_str()));
+    obj.push_back(Pair("height", blockindex->nHeight));
     obj.push_back(Pair("version", block.nVersion));
     obj.push_back(Pair("previousblockhash", block.hashPrevBlock.ToString().c_str()));
     obj.push_back(Pair("merkleroot", block.hashMerkleRoot.ToString().c_str()));
@@ -379,7 +380,7 @@ Value getblockbycount(const Array& params, bool fHelp)
     block.ReadFromDisk(pindex);
     block.BuildMerkleTree();
 
-    return BlockToValue(block);
+    return BlockToValue(block, pindex);
 }
 
 
@@ -403,7 +404,7 @@ Value getblock(const Array& params, bool fHelp)
     block.ReadFromDisk(pindex);
     block.BuildMerkleTree();
 
-    return BlockToValue(block);
+    return BlockToValue(block, pindex);
 }
 
 /* Comparison function for sorting the getchains heads.  */
